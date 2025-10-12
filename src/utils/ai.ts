@@ -33,11 +33,14 @@ const minimax = (board: Array<string | null>, depth: number, isMaximizing: boole
 }
 
 const getBestMove = (board: Array<string | null>) => {
+  const start = performance.now()
   let bestScore = -Infinity
-  let move = null
+  let move = -1
+  let evaluated = 0
 
   for (let i = 0; i < board.length; i++) {
     if (!board[i]) {
+      evaluated += 1
       const newBoard = [...board]
       newBoard[i] = 'O'
       const score = minimax(newBoard, 0, false)
@@ -47,8 +50,10 @@ const getBestMove = (board: Array<string | null>) => {
       }
     }
   }
+  const end = performance.now()
+  const time = Math.round(end - start)
 
-  return move
+  return { move, evaluated, time }
 }
 
 export { minimax, getBestMove }

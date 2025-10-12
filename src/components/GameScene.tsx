@@ -18,12 +18,18 @@ const GameScene: React.FC = () => {
   const [isXTurn, setIsXTurn] = useState<boolean>(true)
   const [winner, setWinner] = useState<string | null>(null)
   const [scores, setScores] = useState(initScores)
+  const [metrics, setMetrics] = useState({
+    evaluated: 0,
+    time: 0
+  })
 
   useEffect(() => {
     if (!isXTurn) {
       let move = -1
       if (mode == 'Hard') {
-        move = getBestMove(board) as number
+        const { move: m, evaluated, time } = getBestMove(board)
+        move = m
+        setMetrics({ evaluated, time })
       } else {
         const remainSquares = []
         for (let i = 0; i < board.length; i++) {
@@ -69,12 +75,12 @@ const GameScene: React.FC = () => {
     setIsXTurn(true)
     setWinner(null)
     setBoard(Array(9).fill(null))
+    setMetrics({ evaluated: 0, time: 0 })
   }
 
   const handleSelectMode = (mode: string) => {
     setMode(mode)
     setShowModeMenu(false)
-    // setScores(initScores)
     handleRestart()
   }
 
@@ -84,7 +90,7 @@ const GameScene: React.FC = () => {
 
   return (
     <div className='mx-auto my-0 flex h-screen max-w-lg items-center justify-center px-6 py-0'>
-      <div className='w-full'>
+      <div className='h-4/5 w-full'>
         <GameHeader
           isXTurn={isXTurn}
           winner={winner}
@@ -96,6 +102,12 @@ const GameScene: React.FC = () => {
         />
         <GameBoard board={board} onClick={handleClick} />
         <GameScores scores={scores} />
+        {mode === 'Hard' && (
+          <div className='mt-2 w-full text-end text-sm text-[#A8BFC9]'>
+            <p>Positions evaluated: {metrics?.evaluated}</p>
+            <p>Thinking time: {metrics?.time} ms</p>
+          </div>
+        )}
       </div>
     </div>
   )
