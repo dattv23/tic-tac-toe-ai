@@ -49,17 +49,19 @@ const GameScene: React.FC = () => {
   }, [isXTurn, board, mode])
 
   useEffect(() => {
+    if (winner) return
+
     const w = calculateWinner(board)
     if (!w) return
 
-    setWinner(w)
     setScores((prevScores) => {
       if (w === 'X') return { ...prevScores, X: prevScores.X + 1 }
       if (w === 'O') return { ...prevScores, O: prevScores.O + 1 }
       if (w === 'Draw') return { ...prevScores, Draw: prevScores.Draw + 1 }
       return prevScores
     })
-  }, [board])
+    setWinner(w)
+  }, [board, winner])
 
   const handleClick = (index: number) => {
     console.log(winner)
